@@ -5,14 +5,9 @@ import { AppComponent } from './app.component';
 import { WeatherModule } from './weather/weather.module';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    WeatherModule
-  ],
+  declarations: [AppComponent],
+  imports: [BrowserModule, WeatherModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
