@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, mergeMap, switchMap, filter, toArray } from 'rxjs/operators';
 
 interface Coordinates {
   accuracy: number;
@@ -13,11 +13,23 @@ interface Coordinates {
   speed: number | null;
 }
 
+interface OpenWeatherResponse {
+  // inside array each element is gonna be obj
+  list: {
+    dt_txt: string;
+    main: {
+      temp: number;
+    };
+  }[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ForecastService {
-  constructor() {}
+  private url = 'https://api.openweathermap.org/data/2.5/forecast';
+
+  constructor(private http: HttpClient) {}
 
   getForecast() {
     return this.getCurrentLocation().pipe(
@@ -27,7 +39,21 @@ export class ForecastService {
           .set('lon', String(coords.longitude))
           .set('units', 'metric')
           .set('appid', 'e4443779dce4cf41ee40eb0b3504a514');
-      })
+      }),
+      switchMap(params =>
+        this.http.get<OpenWeatherResponse>(this.url, { params })
+      ),
+      map(value => value.list),
+      // take array of records and breaks it up into sigle records objects
+      mergeMap(value => of(...value)),
+      filter((value, index) => index % 8 === 0),
+      map(value => {
+        return {
+          dateString: value.dt_txt,
+          temp: value.main.temp,
+        };
+      }),
+      toArray()
     );
   }
 
