@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap, filter, toArray } from 'rxjs/operators';
+import { map, mergeMap, switchMap, filter, toArray, share } from 'rxjs/operators';
 
 interface Coordinates {
   accuracy: number;
@@ -53,7 +53,9 @@ export class ForecastService {
           temp: value.main.temp,
         };
       }),
-      toArray()
+      toArray(),
+      // turn into multicast
+      share()
     );
   }
 
