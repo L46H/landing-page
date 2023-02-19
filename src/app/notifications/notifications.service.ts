@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+import { scan } from 'rxjs/operators';
 
 interface Command {
   id: number;
@@ -12,15 +13,29 @@ interface Command {
   providedIn: 'root',
 })
 export class NotificationsService {
-  messages: Subject<Command>;
+  messagesInput: Subject<Command>;
+  messagesOutput: Observable<Command[]>;
 
   constructor() {
     // subject is listening before we call below methods
-    this.messages = new Subject<Command>();
+
+    // taking result of calling pipe on messagesInput
+    // and assign it to messagesOutput
+    this.messagesInput = new Subject<Command>()
+    this.messagesOutput = this.messagesInput.pipe(
+      scan((acc: Command[], value: Command) => {
+        if (value.type === 'clear') {
+          return acc.filter(message => message.id !== value.id);
+        } else {
+          return [...acc, value];
+        }
+      }, [])
+    );
   }
 
+
   addSuccess(message: string) {
-    this.messages.next({
+    this.messagesInput.next({
       id: this.randomId(),
       text: message,
       type: 'success',
@@ -28,7 +43,7 @@ export class NotificationsService {
   }
 
   addError(message: string) {
-    this.messages.next({
+    this.messagesInput.next({
       id: this.randomId(),
       text: message,
       type: 'error',
@@ -36,7 +51,7 @@ export class NotificationsService {
   }
 
   clearMessage(id: number) {
-    this.messages.next({
+    this.messagesInput.next({
       // id: id
       id,
       type: 'clear',
