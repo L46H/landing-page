@@ -5,7 +5,7 @@ import { scan } from 'rxjs/operators';
 export interface Command {
   id: number;
   type: 'success' | 'error' | 'clear';
-  // optional
+  // optional in case clearMessage()
   text?: string;
 }
 

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap, filter, toArray, share } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { map, mergeMap, switchMap, filter, toArray, share, tap, catchError, retry } from 'rxjs/operators';
+import { NotificationsService } from '../notifications/notifications.service';
 
 interface Coordinates {
   accuracy: number;
@@ -23,13 +24,21 @@ interface OpenWeatherResponse {
   }[];
 }
 
+interface ForecastData {
+  dateString: string;
+  temp: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ForecastService {
   private url = 'https://api.openweathermap.org/data/2.5/forecast';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private notificationsService: NotificationsService
+  ) { }
 
   getForecast() {
     return this.getCurrentLocation().pipe(
@@ -43,6 +52,11 @@ export class ForecastService {
       switchMap(params =>
         this.http.get<OpenWeatherResponse>(this.url, { params })
       ),
+      tap(() => this.notificationsService.addSuccess('Connected to Weather')),
+      catchError(() => {
+        this.notificationsService.addError('Failed to connected to Weather');
+        return of({ list: [{ dt_txt: '1990-08-01 00:00:00', main: { temp: 0 } }] });
+      }),
       map(value => value.list),
       // take array of records and breaks it up into sigle records objects
       mergeMap(value => of(...value)),
@@ -56,7 +70,10 @@ export class ForecastService {
       toArray(),
       // turn into multicast
       share()
-    );
+      // here is more than 9 operators,
+      // pipe() stops inferring the type and will just return a default type of Observable<{}>
+      // so you'll have to assert the type manually:
+    ) as Observable<ForecastData[]>;
   }
 
   getCurrentLocation() {
@@ -68,6 +85,17 @@ export class ForecastService {
         },
         err => observer.error(err)
       );
-    });
+    }).pipe(
+      retry(2),
+      tap(() => {
+        this.notificationsService.addSuccess('Got your location');
+      }),
+      catchError((err) => {
+        // #1 handle error
+        this.notificationsService.addError('Failed to get your location');
+        // 2# return a new observable
+        return throwError(() => new Error(err));
+      })
+    );
   }
 }

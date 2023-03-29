@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ForecastService } from '../forecast.service';
 
@@ -7,12 +7,10 @@ import { ForecastService } from '../forecast.service';
   templateUrl: './forecast.component.html',
   styleUrls: ['./forecast.component.scss'],
 })
-export class ForecastComponent implements OnInit {
+export class ForecastComponent {
   forecast$: Observable<{ dateString: string; temp: number }[]>;
 
   constructor(forecastService: ForecastService) {
     this.forecast$ = forecastService.getForecast();
   }
-
-  ngOnInit(): void {}
 }
