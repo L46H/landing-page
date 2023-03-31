@@ -24,7 +24,7 @@ interface OpenWeatherResponse {
   }[];
 }
 
-interface ForecastData {
+export interface ForecastData {
   dateString: string;
   temp: number;
 }
@@ -55,6 +55,7 @@ export class ForecastService {
       tap(() => this.notificationsService.addSuccess('Connected to Weather')),
       catchError(() => {
         this.notificationsService.addError('Failed to connected to Weather');
+        // returning alternative observable if failed to fetch current location
         return of({ list: [{ dt_txt: '1990-08-01 00:00:00', main: { temp: 0 } }] });
       }),
       map(value => value.list),
@@ -93,7 +94,7 @@ export class ForecastService {
       catchError((err) => {
         // #1 handle error
         this.notificationsService.addError('Failed to get your location');
-        // 2# return a new observable
+        // 2# throw error away to the further processing pipeline
         return throwError(() => new Error(err));
       })
     );
