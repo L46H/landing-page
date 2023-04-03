@@ -3,12 +3,13 @@ import { Observable, Subject } from 'rxjs';
 import { tap, map, switchMap } from 'rxjs/operators';
 import { HttpParams, HttpClient } from '@angular/common/http';
 
+export interface Article {
+  title: string
+  url: string
+}
 interface NewsApiResponse {
   totalResults: number;
-  articles: {
-    title: string;
-    url: string;
-  }[]
+  articles: Article[];
 }
 
 @Injectable({
@@ -20,8 +21,8 @@ export class NewsApiService {
   private apiKey = '0de1cca8854b4c7ca4e00784b97dd5c6';
   private country = 'us';
 
-  pagesInput: Subject<number>;
-  pagesOutput: Observable<any>;
+  private pagesInput: Subject<number>;
+  pagesOutput: Observable<Article[]>;
   numberOfPages: Subject<number>;
 
   constructor(private http: HttpClient) {
@@ -41,7 +42,12 @@ export class NewsApiService {
         // 55 / 10 = 5.5 -> 6 pages
         const totalPages = Math.ceil(response.totalResults / this.pageSize);
         this.numberOfPages.next(totalPages);
-      })
-    )
+      }),
+      map(response => response.articles)
+    );
+  }
+
+  getPage(page: number) {
+    this.pagesInput.next(page);
   }
 }
