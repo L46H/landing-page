@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Article } from '../news-api.service';
-import { Observable } from 'rxjs';
 import { NewsApiService } from '../news-api.service';
 
 @Component({
@@ -15,6 +14,6 @@ export class NaArticleListComponent {
     this.newsApiService.pagesOutput.subscribe(articles => {
       this.articles = articles;
     });
-    this.newsApiService.getPage(0);
+    this.newsApiService.getPage(1);
   }
 }

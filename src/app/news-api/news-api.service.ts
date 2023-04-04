@@ -4,8 +4,11 @@ import { tap, map, switchMap } from 'rxjs/operators';
 import { HttpParams, HttpClient } from '@angular/common/http';
 
 export interface Article {
-  title: string
-  url: string
+  title: string;
+  url: string;
+  source: {
+    name: string;
+  }
 }
 interface NewsApiResponse {
   totalResults: number;
