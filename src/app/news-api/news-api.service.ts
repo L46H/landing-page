@@ -8,7 +8,7 @@ export interface Article {
   url: string;
   source: {
     name: string;
-  }
+  };
 }
 interface NewsApiResponse {
   totalResults: number;
@@ -16,7 +16,7 @@ interface NewsApiResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NewsApiService {
   private url = 'https://newsapi.org/v2/top-headlines';
@@ -26,10 +26,8 @@ export class NewsApiService {
 
   private pagesInput: Subject<number>;
   pagesOutput: Observable<Article[]>;
-  numberOfPages: Subject<number>;
 
   constructor(private http: HttpClient) {
-    this.numberOfPages = new Subject<number>();
 
     this.pagesInput = new Subject<number>();
     this.pagesOutput = this.pagesInput.pipe(
@@ -40,12 +38,9 @@ export class NewsApiService {
           .set('pagesSize', this.pageSize)
           .set('page', page);
       }),
-      switchMap(params => this.http.get<NewsApiResponse>(this.url, { params: params })),
-      tap(response => {
-        // 55 / 10 = 5.5 -> 6 pages
-        const totalPages = Math.ceil(response.totalResults / this.pageSize);
-        this.numberOfPages.next(totalPages);
-      }),
+      switchMap(params =>
+        this.http.get<NewsApiResponse>(this.url, { params } )
+      ),
       map(response => response.articles)
     );
   }

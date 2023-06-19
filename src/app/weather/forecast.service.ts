@@ -1,7 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { map, mergeMap, switchMap, filter, toArray, share, tap, catchError, retry } from 'rxjs/operators';
+import {
+  map,
+  mergeMap,
+  switchMap,
+  filter,
+  toArray,
+  share,
+  tap,
+  catchError,
+  retry,
+} from 'rxjs/operators';
 import { NotificationsService } from '../notifications/notifications.service';
 
 interface Coordinates {
@@ -38,7 +48,7 @@ export class ForecastService {
   constructor(
     private http: HttpClient,
     private notificationsService: NotificationsService
-  ) { }
+  ) {}
 
   getForecast() {
     return this.getCurrentLocation().pipe(
@@ -56,7 +66,9 @@ export class ForecastService {
       catchError(() => {
         this.notificationsService.addError('Failed to connected to Weather');
         // returning alternative observable if failed to fetch current location
-        return of({ list: [{ dt_txt: '1990-08-01 00:00:00', main: { temp: 0 } }] });
+        return of({
+          list: [{ dt_txt: '1990-08-01 00:00:00', main: { temp: 0 } }],
+        });
       }),
       map(value => value.list),
       // take array of records and breaks it up into sigle records objects
@@ -70,6 +82,9 @@ export class ForecastService {
       }),
       toArray(),
       // turn into multicast
+      // values comming through pipe line
+      // are going to flow once regardless of the number
+      // of subscribers
       share()
       // here is more than 9 operators,
       // pipe() stops inferring the type and will just return a default type of Observable<{}>
@@ -87,14 +102,16 @@ export class ForecastService {
         err => observer.error(err)
       );
     }).pipe(
+      // resubsribe 2 times if fails to get location
       retry(2),
       tap(() => {
         this.notificationsService.addSuccess('Got your location');
       }),
-      catchError((err) => {
+      catchError(err => {
         // #1 handle error
         this.notificationsService.addError('Failed to get your location');
-        // 2# throw error away to the further processing pipeline
+        // 2# return new observable and
+        // throw error away to the further processing pipeline
         return throwError(() => new Error(err));
       })
     );

@@ -14,6 +14,6 @@ export class NaArticleListComponent {
     this.newsApiService.pagesOutput.subscribe(articles => {
       this.articles = articles;
     });
-    this.newsApiService.getPage(1);
+    this.newsApiService.getPage(2);
   }
 }
