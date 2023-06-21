@@ -23,37 +23,7 @@
 
 
 @media (max-width: 650px) {
-  .list-group {
-    margin-top: 800px;
-    transform: translateY(100%);
-  }
-
-  .weather-item {
-    border: none;
-  }
-
   :host {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    margin-bottom: 20px;
-    flex-direction: column;
-    justify-content: center;
-    display: flex;
-  }
-}
-
-@media (max-width: 514px) {
-  .list-group {
-    margin-top: 1050px;
-    transform: translateY(100%);
-  }
-}
-
-@media (max-width: 422px) {
-  .list-group {
-    margin-top: 1300px;
-    transform: translateY(100%);
+    display: none;
   }
 }
