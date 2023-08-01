@@ -11,7 +11,9 @@ import { ForecastData } from '../forecast.service';
 export class ForecastComponent {
   forecast$: Observable<ForecastData[]>;
 
-  constructor(forecastService: ForecastService) {
-    this.forecast$ = forecastService.getForecast();
+  constructor(private forecastService: ForecastService) {}
+
+  ngOnInit(): void {
+    this.forecast$ = this.forecastService.getForecast();
   }
 }

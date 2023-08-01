@@ -25,7 +25,6 @@ interface Coordinates {
 }
 
 interface OpenWeatherResponse {
-  // inside array each element is gonna be obj
   list: {
     dt_txt: string;
     main: {
@@ -65,13 +64,11 @@ export class ForecastService {
       tap(() => this.notificationsService.addSuccess('Connected to Weather')),
       catchError(() => {
         this.notificationsService.addError('Failed to connected to Weather');
-        // returning alternative observable if failed to fetch current location
         return of({
           list: [{ dt_txt: '1990-08-01 00:00:00', main: { temp: 0 } }],
         });
       }),
       map(value => value.list),
-      // take array of records and breaks it up into sigle records objects
       mergeMap(value => of(...value)),
       filter((value, index) => index % 8 === 0),
       map(value => {
@@ -82,13 +79,10 @@ export class ForecastService {
       }),
       toArray(),
       // turn into multicast
-      // values comming through pipe line
-      // are going to flow once regardless of the number
-      // of subscribers
       share()
       // here is more than 9 operators,
       // pipe() stops inferring the type and will just return a default type of Observable<{}>
-      // so you'll have to assert the type manually:
+      // so it's necessary assert the type manually:
     ) as Observable<ForecastData[]>;
   }
 
@@ -102,16 +96,12 @@ export class ForecastService {
         err => observer.error(err)
       );
     }).pipe(
-      // resubsribe 2 times if fails to get location
       retry(2),
       tap(() => {
         this.notificationsService.addSuccess('Got your location');
       }),
       catchError(err => {
-        // #1 handle error
         this.notificationsService.addError('Failed to get your location');
-        // 2# return new observable and
-        // throw error away to the further processing pipeline
         return throwError(() => new Error(err));
       })
     );
