@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ForecastService } from '../forecast.service';
 import { ForecastData } from '../forecast.service';
@@ -8,7 +8,7 @@ import { ForecastData } from '../forecast.service';
   templateUrl: './forecast.component.html',
   styleUrls: ['./forecast.component.scss'],
 })
-export class ForecastComponent {
+export class ForecastComponent implements OnInit{
   forecast$: Observable<ForecastData[]>;
 
   constructor(private forecastService: ForecastService) {}

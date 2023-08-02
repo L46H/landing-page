@@ -35,8 +35,8 @@ export class NewsApiService {
         return new HttpParams()
           .set('apiKey', this.apiKey)
           .set('country', this.country)
-          .set('pagesSize', this.pageSize)
-          .set('page', page);
+          .set('pagesSize', this.pageSize.toString())
+          .set('page', page.toString());
       }),
       switchMap(params =>
         this.http.get<NewsApiResponse>(this.url, { params } )
