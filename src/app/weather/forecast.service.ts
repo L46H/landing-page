@@ -13,30 +13,11 @@ import {
   retry,
 } from 'rxjs/operators';
 import { NotificationsService } from '../notifications/notifications.service';
-
-interface Coordinates {
-  accuracy: number;
-  altitude: number | null;
-  altitudeAccuracy: number | null;
-  heading: number | null;
-  latitude: number;
-  longitude: number;
-  speed: number | null;
-}
-
-interface OpenWeatherResponse {
-  list: {
-    dt_txt: string;
-    main: {
-      temp: number;
-    };
-  }[];
-}
-
-export interface ForecastData {
-  dateString: string;
-  temp: number;
-}
+import {
+  OpenWeatherResponse,
+  ForecastData,
+  Coordinates,
+} from './interfaces/weather.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -49,7 +30,7 @@ export class ForecastService {
     private notificationsService: NotificationsService
   ) {}
 
-  getForecast() {
+  getForecast(): Observable<ForecastData[]> {
     return this.getCurrentLocation().pipe(
       map(coords => {
         return new HttpParams()
@@ -86,7 +67,7 @@ export class ForecastService {
     ) as Observable<ForecastData[]>;
   }
 
-  getCurrentLocation() {
+  getCurrentLocation(): Observable<Coordinates> {
     return new Observable<Coordinates>(observer => {
       window.navigator.geolocation.getCurrentPosition(
         position => {

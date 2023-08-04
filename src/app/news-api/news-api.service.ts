@@ -1,19 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { tap, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { HttpParams, HttpClient } from '@angular/common/http';
-
-export interface Article {
-  title: string;
-  url: string;
-  source: {
-    name: string;
-  };
-}
-interface NewsApiResponse {
-  totalResults: number;
-  articles: Article[];
-}
+import { Article, NewsApiResponse } from './interfaces/news-api.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -27,25 +16,28 @@ export class NewsApiService {
   private pagesInput: Subject<number>;
   pagesOutput: Observable<Article[]>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient) {}
 
-    this.pagesInput = new Subject<number>();
+  private createArticlesObservable(): void {
     this.pagesOutput = this.pagesInput.pipe(
       map(page => {
         return new HttpParams()
           .set('apiKey', this.apiKey)
           .set('country', this.country)
-          .set('pagesSize', this.pageSize.toString())
+          .set('pageSize', this.pageSize.toString())
           .set('page', page.toString());
       }),
-      switchMap(params =>
-        this.http.get<NewsApiResponse>(this.url, { params } )
-      ),
+      switchMap(params => this.http.get<NewsApiResponse>(this.url, { params })),
       map(response => response.articles)
     );
   }
 
-  getPage(page: number) {
+  initializePageStream(): void {
+    this.pagesInput = new Subject<number>();
+    this.createArticlesObservable();
+  }
+
+  getPage(page: number): void {
     this.pagesInput.next(page);
   }
 }

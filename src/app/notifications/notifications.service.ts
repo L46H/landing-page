@@ -1,17 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { scan } from 'rxjs/operators';
-
-export interface Command {
-  id: number;
-  type: 'success' | 'error' | 'clear';
-  text?: string;
-}
+import { Command } from './interfaces/notifications.interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class NotificationsService {
   messagesInput: Subject<Command>;
   messagesOutput: Observable<Command[]>;
@@ -29,7 +23,7 @@ export class NotificationsService {
     );
   }
 
-  addSuccess(message: string) {
+  addSuccess(message: string): void {
     const id = this.randomId();
     this.messagesInput.next({
       id,
@@ -42,7 +36,7 @@ export class NotificationsService {
     }, 5000);
   }
 
-  addError(message: string) {
+  addError(message: string): void {
     const id = this.randomId();
 
     this.messagesInput.next({
@@ -56,14 +50,14 @@ export class NotificationsService {
     }, 5000);
   }
 
-  clearMessage(id: number) {
+  clearMessage(id: number): void {
     this.messagesInput.next({
       id,
       type: 'clear',
     });
   }
 
-  private randomId() {
+  private randomId(): number {
     return Math.round(Math.random() * 10000);
   }
 }

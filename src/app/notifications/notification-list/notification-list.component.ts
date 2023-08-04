@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Command, NotificationsService } from '../notifications.service';
+import { NotificationsService } from '../notifications.service';
+import { Command } from '../interfaces/notifications.interfaces';
 
 @Component({
   selector: 'app-notification-list',
