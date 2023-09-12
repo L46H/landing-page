@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NewsApiService } from '../news-api.service';
 import { Article } from '../interfaces/news-api.interfaces';
+import { Observable } from 'rxjs';
+import { NgIfContext } from '@angular/common';
 
 @Component({
   selector: 'app-na-article-list',
@@ -8,17 +10,12 @@ import { Article } from '../interfaces/news-api.interfaces';
   styleUrls: ['./na-article-list.component.scss'],
 })
 export class NaArticleListComponent implements OnInit {
-  articles: Article[] = [];
+  articles$: Observable<Article[]>;
+  loading: TemplateRef<NgIfContext<Article[]>>;
 
   constructor(private newsApiService: NewsApiService) {}
 
   ngOnInit(): void {
-    this.newsApiService.initializePageStream();
-
-    this.newsApiService.pagesOutput.subscribe(articles => {
-      this.articles = articles;
-    });
-
-    this.newsApiService.getPage(2);
+    this.articles$ = this.newsApiService.getPage(1);
   }
 }

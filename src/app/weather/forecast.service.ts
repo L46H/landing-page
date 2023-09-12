@@ -51,7 +51,7 @@ export class ForecastService {
       }),
       map(value => value.list),
       mergeMap(value => of(...value)),
-      filter((value, index) => index % 8 === 0),
+      filter((_, index) => index % 8 === 0),
       map(value => {
         return {
           dateString: value.dt_txt,

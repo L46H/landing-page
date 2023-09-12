@@ -21,9 +21,8 @@
   font-style: italic;
 }
 
-
-@media (max-width: 650px) {
+@media (min-width: 844px) {
   :host {
-    display: none;
+    margin-top: 45px;
   }
 }
