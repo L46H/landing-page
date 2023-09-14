@@ -1,9 +1,11 @@
-<ul class="list-group d-none d-sm-block">
-  <li
-    *ngFor="let forecast of forecast$ | async"
-    class="weather-item list-group-item"
-  >
-    <p class="temp">{{ forecast.temp | number : '1.0-0' }}°C</p>
-    <p class="day">{{ forecast.dateString | date : 'E' }}</p>
-  </li>
-</ul>
+<div class="container mt-5">
+  <ul class="list-group">
+    <li
+      *ngFor="let forecast of forecast$ | async"
+      class="weather-item list-group-item"
+    >
+      <p class="temp">{{ forecast.temp | number : '1.0-0' }}°C</p>
+      <p class="day">{{ forecast.dateString | date : 'E' }}</p>
+    </li>
+  </ul>
+</div>

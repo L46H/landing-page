@@ -1,10 +1,13 @@
 :host {
   position: fixed;
-  left: 0;
-  height: 100%;
+  top: 21%;
   flex-direction: column;
   justify-content: center;
-  display: flex;
+  font-size: 15px;
+}
+
+.weather-li {
+  border-radius: 2px;
 }
 
 .temp,
@@ -21,8 +24,12 @@
   font-style: italic;
 }
 
-@media (min-width: 844px) {
+@media (max-width: 1280px) {
   :host {
-    margin-top: 45px;
+    position: static;
+  }
+
+  .container {
+    margin-bottom: 5px;
   }
 }

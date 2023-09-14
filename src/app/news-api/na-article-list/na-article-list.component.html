@@ -1,5 +1,8 @@
-<div *ngIf="articles$ | async as articles; else loading">
-  <h3 class="title mt-2">World News</h3>
+<h3 class="title text-center mt-2">World News</h3>
+<div
+class="container mt-5 d-flex justify-content-center"
+*ngIf="articles$ | async as articles; else loading"
+>
   <div class="list-group">
     <a
       *ngFor="let article of articles"

@@ -59,11 +59,7 @@ export class ForecastService {
         };
       }),
       toArray(),
-      // turn into multicast
       share()
-      // here is more than 9 operators,
-      // pipe() stops inferring the type and will just return a default type of Observable<{}>
-      // so it's necessary assert the type manually:
     ) as Observable<ForecastData[]>;
   }
 
