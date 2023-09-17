@@ -1,18 +1,20 @@
 <h3 class="title text-center mt-2">World News</h3>
-<div
-class="container mt-5 d-flex justify-content-center"
-*ngIf="articles$ | async as articles; else loading"
->
-  <div class="list-group">
-    <a
-      *ngFor="let article of articles"
-      class="list-group-item list-group-item-action"
-      [href]="article.url"
-      target="_blank"
-    >
-      {{ article.title | trimOutletName : article.source.name }}
-    </a>
-  </div>
+<div class="container mt-5 d-flex justify-content-center">
+  <ng-container *ngIf="error; else articlesList">
+    <div class="alert alert-danger">{{ error }}</div>
+  </ng-container>
+  <ng-template #articlesList>
+    <div class="list-group" *ngIf="articles$ | async as articles; else loading">
+      <a
+        *ngFor="let article of articles"
+        class="list-group-item list-group-item-action"
+        [href]="article.url"
+        target="_blank"
+      >
+        {{ article.title | trimOutletName : article.source.name }}
+      </a>
+    </div>
+  </ng-template>
 </div>
 <ng-template #loading>
   <p class="text-center mt-5 fs-4">Fetching articles...</p>

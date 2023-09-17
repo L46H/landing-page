@@ -1,8 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NewsApiService } from '../news-api.service';
 import { Article } from '../interfaces/news-api.interfaces';
-import { Observable } from 'rxjs';
-import { NgIfContext } from '@angular/common';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-na-article-list',
@@ -11,11 +10,17 @@ import { NgIfContext } from '@angular/common';
 })
 export class NaArticleListComponent implements OnInit {
   articles$: Observable<Article[]>;
-  loading: TemplateRef<NgIfContext<Article[]>>;
+  error: Error | null = null;
 
   constructor(private newsApiService: NewsApiService) {}
 
   ngOnInit(): void {
-    this.articles$ = this.newsApiService.getPage(1);
+    this.articles$ = this.newsApiService.getPage(1).pipe(
+      tap({
+        error: error => {
+          this.error = error.message;
+        },
+      })
+    );
   }
 }
